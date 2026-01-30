@@ -1,0 +1,158 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// User model for BetterAuth authentication
+model User {
+  id        String   @id @default(cuid())
+  email     String   @unique
+  name      String?
+  image     String?
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relations
+  carouselImages CarouselImage[]
+  teamMembers    TeamMember[]
+  events         Event[]
+  blogPosts      BlogPost[]
+  contactInfos   ContactInfo[]
+}
+
+// Carousel Images for hero section
+model CarouselImage {
+  id        String   @id @default(cuid())
+  imageUrl  String
+  title     String
+  subtitle  String
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Team Members
+model TeamMember {
+  id        String   @id @default(cuid())
+  name      String
+  role      String
+  bio       String   @db.Text
+  imageUrl  String?
+  order     Int      @default(0)
+  active    Boolean  @default(true)
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Events
+model Event {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  date        DateTime
+  time        String
+  location    String
+  imageUrl    String?
+  attendees   Int      @default(0)
+  category    String   @default("upcoming") // upcoming, past, featured
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+}
+
+// Blog Posts
+model BlogPost {
+  id          String   @id @default(cuid())
+  title       String
+  content     String   @db.Text
+  excerpt     String   @db.Text
+  slug        String   @unique
+  imageUrl    String?
+  category    String   @default("news")
+  published   Boolean  @default(false)
+  readTime    Int      @default(5) // in minutes
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  publishedAt DateTime?
+  userId      String
+  user        User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@index([userId])
+  @@index([published])
+}
+
+// Contact Information (for the site-wide contact details)
+model ContactInfo {
+  id        String   @id @default(cuid())
+  email     String
+  phone     String
+  address   String   @db.Text
+  updatedAt DateTime @updatedAt
+  userId    String
+  user      User     @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId]) // Only one contact info per user
+  @@index([userId])
+}
+
+// Featured Causes (fundraising campaigns)
+model FeaturedCause {
+  id          String   @id @default(cuid())
+  title       String
+  description String   @db.Text
+  icon        String   @default("💚") // emoji
+  progress    Int      @default(0) // percentage
+  raised      Float    @default(0)
+  goal        Float
+  order       Int      @default(0)
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+// Contact Form Submissions
+model ContactSubmission {
+  id        String   @id @default(cuid())
+  name      String
+  email     String
+  subject   String
+  message   String   @db.Text
+  status    String   @default("new") // new, read, responded
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Volunteer Signups
+model VolunteerSignup {
+  id            String   @id @default(cuid())
+  name          String
+  email         String
+  phone         String
+  interests     String   @db.Text // comma-separated or JSON array
+  commitmentLevel String  // part-time, full-time, flexible
+  skills        String   @db.Text // comma-separated
+  message       String?  @db.Text
+  status        String   @default("pending") // pending, approved, rejected
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+}
