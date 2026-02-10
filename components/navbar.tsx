@@ -52,18 +52,19 @@ export default function Navbar() {
                 Volunteer
               </Link>
             </Button>
-            <Button variant="outline" className="gap-2 bg-transparent" asChild>
-              <Link href="/login">
-                <LogIn className="w-4 h-4" />
-                Login
-              </Link>
-            </Button>
             <Button className="bg-primary hover:bg-primary/90 text-white gap-2 rounded-full" asChild>
               <Link href="/donate">
                 <Heart className="w-4 h-4" fill="currentColor" />
                 Donate
               </Link>
             </Button>
+            <Button variant="outline" className="gap-2 bg-transparent" asChild>
+              <Link href="/login">
+                <LogIn className="w-4 h-4" />
+                Login
+              </Link>
+            </Button>
+            
           </div>
 
           {/* Mobile Menu Button */}
