@@ -21,7 +21,7 @@ export default function Navbar() {
           {/* Logo */}
           <Link href="/" className="flex items-center gap-2 font-bold text-xl text-primary hover:opacity-80 transition font-serif">
             <Heart className="w-6 h-6" fill="currentColor" />
-            <span>Elevate Impact</span>
+            <span>Elevate</span>
           </Link>
 
           {/* Desktop Menu */}
